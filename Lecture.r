@@ -63,7 +63,7 @@ getwd()  # Find out current working directory
 # Define the path where the data is stored on your computer. Some examples:
 #work.dir <- "D:/BEN/my_name"
 #work.dir <- "~/Dropbox/Bio-Workshop"
-work.dir <- "C:/Users/n351384/OneDrive - Munich Re/Privat/R basics 2days"
+work.dir <- "C:/Users/R basics 2days"
 # Set this to directory with your data
 setwd(work.dir)
 
