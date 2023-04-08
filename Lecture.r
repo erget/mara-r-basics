@@ -63,7 +63,7 @@ getwd()  # Find out current working directory
 # Define the path where the data is stored on your computer. Some examples:
 #work.dir <- "D:/BEN/my_name"
 #work.dir <- "~/Dropbox/Bio-Workshop"
-work.dir <- "C:/Users/R basics 2days"
+work.dir <- "C:/Users/Documents/R basics 2days"
 # Set this to directory with your data
 setwd(work.dir)
 
@@ -337,10 +337,6 @@ shapiro.test(aphasiker[aphasiker$Aphasie == "W", 14])
 var.test(aphasiker_BW$Lex_Dec ~ aphasiker_BW$Aphasie)
 t.test(aphasiker_BW$Lex_Dec ~ aphasiker_BW$Aphasie, var.equal=TRUE)
 
-# One-sided t-tests: greater or less
-t.test(aphasiker_BW$Lex_Dec ~ aphasiker_BW$Aphasie, alternative="greater")  
-t.test(aphasiker_BW$Lex_Dec ~ aphasiker_BW$Aphasie, alternative="less") 
-
 # Test against given mean value
 t.test(aphasiker$Lex_Dec, mu=1200) 
 
@@ -367,15 +363,17 @@ select(aphasiker, Patienten_ID:Artikulation)
 
 select(aphasiker, Patienten_ID, Aphasie, contains("Wert"))
 
+?select
+
 arrange(aphasiker, Lex_Dec)
 
 arrange(aphasiker, -Artikulation, -Syntax, -Wortfindung)
 
 arrange(filter(select(aphasiker, Patienten_ID, Aphasie, Lex_Dec), Lex_Dec > 1600), -Lex_Dec)
 
-aphasiker %>%
-    select(Patienten_ID, Aphasie, Lex_Dec) %>%
-    filter(Lex_Dec > 1600) %>%
+aphasiker |>
+    select(Patienten_ID, Aphasie, Lex_Dec) |>
+    filter(Lex_Dec > 1600) |>
     arrange(-Lex_Dec)
 
 aphasiker$Lex_Dec_2 <- round(aphasiker$Lex_Dec, 0)
@@ -393,9 +391,24 @@ summarise(aphasiker_grouped,
           distinct_Syntax = n_distinct(Syntax)
          )
 
+aphasiker |> 
+    group_by(Aphasie) |> 
+    summarise(across(Satzlänge:Lex_Dec, list(avg = mean, sd = sd)))
+
+aphasiker |> 
+    group_by(Aphasie) |> 
+    summarise(across(Satzlänge:Lex_Dec, list(avg = ~mean(.x, na.rm = T), sd = ~sd(.x, na.rm = T))))
+
 n_distinct(aphasiker$Aphasie)
 
 sample_frac(aphasiker_grouped, 0.2)
+
+boxplot(Lex_Dec ~ Aphasie, data = aphasiker, main = "Lexical decision time by type of Aphasie", xlab = "Type of Aphasie", ylab = "Lex dec", col = "steelblue")
+
+aphasiker |>
+  group_by(Aphasie) |>
+  summarise(mean = mean(Lex_Dec, na.rm=T),
+  sd = sd(Lex_Dec, na.rm=T))
 
 fit <- aov(aphasiker$Lex_Dec ~ aphasiker$Aphasie)
 fit
@@ -412,6 +425,8 @@ summary(fit3)
 # Short form version
 fit3 <- aov(aphasiker$Lex_Dec ~ aphasiker$Aphasie*aphasiker$Geschlecht)
 summary(fit3)
+
+TukeyHSD(fit, conf.level=.95)
 
 #install.packages("car")
 library(car)
