@@ -153,11 +153,6 @@ claims[claims$Education == "Doctor" | claims$Education == "Master", ]$high.quali
 mean(claims[claims$high.qualified == TRUE, ]$Total.Claim.Amount)
 mean(claims[claims$high.qualified == FALSE, ]$Total.Claim.Amount)
 
-numeric.aphasiker <- aphasiker[, c(3,4, 6:14)]
-apply(numeric.aphasiker, 2, min, na.rm = T)
-apply(numeric.aphasiker, 2, max, na.rm = T)
-apply(numeric.aphasiker, 2, sd, na.rm = T)
-
 hist(claims$Income)
 hist(claims[claims$Income>0,]$Income, main="Income Distribution", xlab="Income")
 
@@ -191,9 +186,9 @@ arrange(filter(select(claims,
                Number.of.Open.Complaints >= 1), 
         -Claim.Amount)
 
-claims %>%
-    select(Customer, Claim.Amount, Number.of.Open.Complaints) %>%
-    filter(Number.of.Open.Complaints >= 1) %>%
+claims |>
+    select(Customer, Claim.Amount, Number.of.Open.Complaints) |>
+    filter(Number.of.Open.Complaints >= 1) |>
     arrange(-Claim.Amount)
 
 cor.test(claims$Claim.Amount, claims$Total.Claim.Amount, method="spearman")
@@ -201,6 +196,11 @@ cor.test(claims$Claim.Amount, claims$Months.Since.Policy.Inception, method="spea
 cor.test(claims$Claim.Amount, claims$Income, method="spearman")
 
 cor(claims[, c(5, 12, 17)], method = "spearman")
+
+numeric.aphasiker <- aphasiker[, c(3,4, 6:14)]
+apply(numeric.aphasiker, 2, min, na.rm = T)
+apply(numeric.aphasiker, 2, max, na.rm = T)
+apply(numeric.aphasiker, 2, sd, na.rm = T)
 
 # Repeat this with different values for hungry
 # Also try using conditions that have to be evaluated, like "n - 4"

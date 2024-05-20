@@ -37,7 +37,7 @@ hist(claims$Claim.Amount)
 table(claims$Education)
 
 claims$Education.Level <- "low"
-claims$Education.Level[claims$Education %in% c("Master", "Doctor", "Bachelor")] <- "high"
+claims\$Education.Level[claims$Education %in% c("Master", "Doctor", "Bachelor")] <- "high"
 
 claims_basic <- claims[claims$Coverage == "Basic", ]
 
@@ -48,7 +48,6 @@ summary(fit_claims)
 
 plot(fit_claims)
 
-# Load a library that contains functions we want to use
 library(ggplot2)
 
 p <- ggplot(claims,
@@ -192,18 +191,8 @@ claims$id <- 1:nrow(claims)  # Assign an ID number to each row
 head(claims)
 
 claims$Large.Loss <- "No"
-claims$Large.Loss[claims$Claim.Amount > 1000] <- "Yes"
+claims\$Large.Loss[claims$Claim.Amount > 1000] <- "Yes"
 table(claims$Large.Loss)
-
-?apply
-
-head(aphasiker)
-
-apply(aphasiker, 2, summary)  # Apply "summary" to each column
-
-summary(aphasiker)  # For comparison
-
-apply(aphasiker[, c(3,4, 6:14)], 2, mean, na.rm = T)
 
 write.table(claims, "claims_new.txt", sep=";")
 
@@ -257,9 +246,9 @@ barplot(gender.table, col=rainbow(2), main="Gender")
 
 pie(gender.table) 
 
-boxplot(aphasiker$Alter ~ aphasiker$Aphasie, col="gold")
+boxplot(aphasiker\$Alter ~ aphasiker$Aphasie, col="gold")
 
-plot(claims$Total.Claim.Amount, claims$Claim.Amount)
+plot(claims\$Total.Claim.Amount, claims$Claim.Amount)
 
 x <- 2001:2010
 y <- c(4,1,6,3,8,5,4,7,3,9)
@@ -294,7 +283,7 @@ chi_gender$expected
 
 chisq.test(table(aphasiker$Geschlecht), p=c(0.3,0.7))
 
-table_Gender_Aphasie <- table(aphasiker$Geschlecht, aphasiker$Aphasie)
+table_Gender_Aphasie <- table(aphasiker\$Geschlecht, aphasiker$Aphasie)
 table_Gender_Aphasie
 chisq.test(table_Gender_Aphasie)
 
@@ -306,18 +295,18 @@ chisq.test(matrix_Gender_Aphasie)
 
 shapiro.test(aphasiker$Lex_Dec)
 
-ks.test(aphasiker$Lex_Dec, "pnorm", mean=mean(aphasiker$Lex_Dec, na.rm=T),
+ks.test(aphasiker$Lex_Dec, "pnorm", mean=mean(aphasiker\$Lex_Dec, na.rm=T),
          sd=sd(aphasiker$Lex_Dec, na.rm=T))
 
-mean(aphasiker$Lex_Dec)
+mean(aphasiker\$Lex_Dec)
 mean(aphasiker$Lex_Dec, na.rm=T)
 
 Lex_Dec_new <- na.omit(aphasiker$Lex_Dec)
 ks.test(Lex_Dec_new, "pnorm", mean=mean(Lex_Dec_new), sd=sd(Lex_Dec_new))
 
-hist(aphasiker$Lex_Dec, freq=F)
-lines(density(aphasiker$Lex_Dec, na.rm=T))
-curve(dnorm(x, mean=mean(aphasiker$Lex_Dec, na.rm=T), sd=sd(aphasiker$Lex_Dec, na.rm=T)),
+hist(aphasiker\$Lex_Dec, freq=F)
+lines(density(aphasiker\$Lex_Dec, na.rm=T))
+curve(dnorm(x, mean=mean(aphasiker\$Lex_Dec, na.rm=T), sd=sd(aphasiker$Lex_Dec, na.rm=T)),
       col="darkblue", lwd=2, add=TRUE)
 
 aphasiker_BW <- subset(aphasiker, Aphasie == "B" | Aphasie == "W")
@@ -325,25 +314,23 @@ aphasiker_BW <- aphasiker[aphasiker$Aphasie == "W" | aphasiker$Aphasie == "B", ]
 dim(aphasiker)
 dim(aphasiker_BW)
 
-t.test(aphasiker_BW$Lex_Dec ~ aphasiker_BW$Aphasie)
+t.test(aphasiker_BW\$Lex_Dec ~ aphasiker_BW$Aphasie)
 
 aphasiker_B <- subset(aphasiker, Aphasie == "B")
 aphasiker_W <- subset(aphasiker, Aphasie == "W")
-t.test(aphasiker_B$Lex_Dec, aphasiker_W$Lex_Dec)
+t.test(aphasiker_B\$Lex_Dec, aphasiker_W$Lex_Dec)
 
 shapiro.test(aphasiker[aphasiker$Aphasie == "B", 14])
 shapiro.test(aphasiker[aphasiker$Aphasie == "W", 14])
 
-var.test(aphasiker_BW$Lex_Dec ~ aphasiker_BW$Aphasie)
-t.test(aphasiker_BW$Lex_Dec ~ aphasiker_BW$Aphasie, var.equal=TRUE)
+var.test(aphasiker_BW\$Lex_Dec ~ aphasiker_BW\$Aphasie)
+t.test(aphasiker_BW\$Lex_Dec ~ aphasiker_BW$Aphasie, var.equal=TRUE)
 
-# Test against given mean value
 t.test(aphasiker$Lex_Dec, mu=1200) 
 
-# Paired t-test. Note that the formula notation doesn't make much sense here
-t.test(aphasiker_BW$Syntax, aphasiker_BW$Wortfindung, paired=TRUE)
+t.test(aphasiker_BW\$Syntax, aphasiker_BW$Wortfindung, paired=TRUE)
 
-wilcox.test(aphasiker_BW$Lex_Dec ~ aphasiker_BW$Aphasie)
+wilcox.test(aphasiker_BW\$Lex_Dec ~ aphasiker_BW$Aphasie)
 
 library(dplyr)
 
@@ -391,6 +378,15 @@ summarise(aphasiker_grouped,
           distinct_Syntax = n_distinct(Syntax)
          )
 
+aphasiker |>  
+    group_by(Aphasie) |> 
+    mutate(Lex_Dec_norm = Lex_Dec * Alter / mean(Alter, na.rm = TRUE))
+
+aphasiker |>  
+    arrange(Aphasie, Beginn) |> 
+    group_by(Aphasie) |> 
+    mutate(Lex_Dec_sum = cumsum(coalesce(Lex_Dec, 0)))
+
 aphasiker |> 
     group_by(Aphasie) |> 
     summarise(across(Satzlänge:Lex_Dec, list(avg = mean, sd = sd)))
@@ -403,6 +399,13 @@ n_distinct(aphasiker$Aphasie)
 
 sample_frac(aphasiker_grouped, 0.2)
 
+library(tidyr)
+
+pivot_longer(aphasiker, 
+    cols = Satzlänge:Lex_Dec, 
+    names_to = "Measure", 
+    values_to = "Values")
+
 boxplot(Lex_Dec ~ Aphasie, data = aphasiker, main = "Lexical decision time by type of Aphasie", xlab = "Type of Aphasie", ylab = "Lex dec", col = "steelblue")
 
 aphasiker |>
@@ -410,44 +413,42 @@ aphasiker |>
   summarise(mean = mean(Lex_Dec, na.rm=T),
   sd = sd(Lex_Dec, na.rm=T))
 
-fit <- aov(aphasiker$Lex_Dec ~ aphasiker$Aphasie)
+fit <- aov(aphasiker\$Lex_Dec ~ aphasiker$Aphasie)
 fit
 
 summary(fit)
 
-fit2 <- aov(aphasiker$Lex_Dec ~ aphasiker$Aphasie + aphasiker$Geschlecht)
+fit2 <- aov(aphasiker\$Lex_Dec ~ aphasiker\$Aphasie + aphasiker$Geschlecht)
 summary(fit2)
 
-fit3 <- aov(aphasiker$Lex_Dec ~ aphasiker$Aphasie + aphasiker$Geschlecht +
+fit3 <- aov(aphasiker\$Lex_Dec ~ aphasiker\$Aphasie + aphasiker\$Geschlecht +
               aphasiker$Aphasie:aphasiker$Geschlecht)
 summary(fit3)
 
-# Short form version
-fit3 <- aov(aphasiker$Lex_Dec ~ aphasiker$Aphasie*aphasiker$Geschlecht)
+fit3 <- aov(aphasiker\$Lex_Dec ~ aphasiker\$Aphasie*aphasiker$Geschlecht)
 summary(fit3)
 
 TukeyHSD(fit, conf.level=.95)
 
-#install.packages("car")
 library(car)
 
-leveneTest(aphasiker$Lex_Dec ~ aphasiker$Aphasie*aphasiker$Geschlecht)
+leveneTest(aphasiker\$Lex_Dec ~ aphasiker\$Aphasie*aphasiker$Geschlecht)
 
-oneway.test(aphasiker$Lex_Dec ~ aphasiker$Aphasie + aphasiker$Geschlecht)
+oneway.test(aphasiker\$Lex_Dec ~ aphasiker\$Aphasie + aphasiker$Geschlecht)
 
-cor(aphasiker$Alter, aphasiker$Lex_Dec, use="complete.obs")
+cor(aphasiker\$Alter, aphasiker$Lex_Dec, use="complete.obs")
 
-plot(aphasiker$Alter, aphasiker$Lex_Dec)
+plot(aphasiker\$Alter, aphasiker$Lex_Dec)
 
 # Test 1: Pearson's cor
-cor.test(aphasiker$Alter, aphasiker$Lex_Dec)
+cor.test(aphasiker\$Alter, aphasiker$Lex_Dec)
 
 # Test 2: Spearman's rho
-cor.test(aphasiker$Alter, aphasiker$Lex_Dec,
+cor.test(aphasiker\$Alter, aphasiker$Lex_Dec,
          method="spearman")
 
 # Test 3: Kendall's tau
-cor.test(aphasiker$Alter, aphasiker$Lex_Dec,
+cor.test(aphasiker\$Alter, aphasiker$Lex_Dec,
          method="kendall")
 
 lm1 <- lm(Lex_Dec ~ Alter, data=aphasiker)
@@ -482,42 +483,50 @@ plot(fit_claims)
 
 ?glm
 
-# Get a list of all files in input directory
-input.folder <- "data/Mannobi/"
-files <- list.files(input.folder)
-files <- paste(input.folder, files, sep = "")
+barplot(table(claims$Education))
 
-# Initialize a data frame of mean intensities with 1 row
-mean.intensities <- data.frame(1)
-# Loop over all files
-for (file in files) {
-  # Read each file, skipping the first 18 lines
-  read.file <- read.table(file, skip = 18)
-  # Assume that observations of 999.999 mean that the sensor was oversaturated
-  read.file$V2[read.file$V2 == 999.999] <- NA
-  # Construct a file name to save to by concatenating ".png" to the end of the
-  # text file's name
-  filename <- paste(file, ".png", sep = "")
-  # Open the file as a PNG so you can save the plot to it
-#  png(filename)
-  # Create the plot from the two columns in the table we read
-  plot(read.file$V1, read.file$V2,
-    type = "l",  # Plot the observations as a line
-    xlab = "Nanometers",  # Label X axis
-    ylab = "Intensity")  # Label Y axis
-  dev.off()  # Save and close plot file
-  # Record mean intensities to the data frame
-  mean.intensities[[file]] <- mean(read.file$V2, na.rm = TRUE)
-}
+Education_factor <- as.factor(claims$Education)
+Education_ordered <- factor(Education_factor, levels=c("High School or Below", "College", "Bachelor", "Master", "Doctor"))
 
-# Clean up outputs
-mean.intensities <- mean.intensities[-1]
-mean.intensities <- t(mean.intensities)
-mean.intensities <- data.frame(source.file = rownames(mean.intensities), 
-                               mean.intensities = mean.intensities, 
-                               row.names = NULL)
-# Write to disk
-write.csv(mean.intensities, "mean_intensities.csv")
+barplot(table(Education_ordered))
+
+dates <- c("02/27/23", "02/27/23", "01/14/23", "02/28/23", "02/01/23")
+dates <- as.Date(dates, "%m/%d/%y")
+
+start_date <- as.Date("01/01/23", "%m/%d/%y")
+
+dates - start_date
+
+str(claims)
+as.Date(claims$Effective.To.Date, "%m/%d/%y")
+
+datetime <- as.POSIXct("2024-05-03 14:30:00", tz = "UTC")
+datetime - Sys.time()
+
+text <- c("This", "is", "a", "R", "Training")
+nchar(text)
+
+paste(text, collapse=" ")
+substr(text, start=1, stop=1)
+sort(text)
+
+text_long <- "This is a very long text"
+strsplit(text_long, split=" ")
+
+?apply
+
+head(aphasiker)
+
+apply(aphasiker, 2, summary)  # Apply "summary" to each column
+
+summary(aphasiker)  # For comparison
+
+apply(aphasiker[, c(3,4, 6:14)], 2, mean, na.rm = T)
+
+my_list <- list(a = c(1, 2, 3), b = c(4, 5, 6), c = c(7, 8, 9))
+
+lapply(my_list, mean)
+sapply(my_list, mean)
 
 library("ggplot2")
 
@@ -563,6 +572,43 @@ ggplot(claims, aes(x=Monthly.Premium.Auto, y=Claim.Amount, color=Coverage)) +
   geom_smooth(method="lm", color="orange", linetype=2) +
   labs(title="Claim Analyses", x="Monthly Premium", y="Claim Amount") +
   scale_colour_brewer(palette = "Set1") 
+
+# Get a list of all files in input directory
+input.folder <- "data/Mannobi/"
+files <- list.files(input.folder)
+files <- paste(input.folder, files, sep = "")
+
+# Initialize a data frame of mean intensities with 1 row
+mean.intensities <- data.frame(1)
+# Loop over all files
+for (file in files) {
+  # Read each file, skipping the first 18 lines
+  read.file <- read.table(file, skip = 18)
+  # Assume that observations of 999.999 mean that the sensor was oversaturated
+  read.file$V2[read.file$V2 == 999.999] <- NA
+  # Construct a file name to save to by concatenating ".png" to the end of the
+  # text file's name
+  filename <- paste(file, ".png", sep = "")
+  # Open the file as a PNG so you can save the plot to it
+#  png(filename)
+  # Create the plot from the two columns in the table we read
+  plot(read.file$V1, read.file$V2,
+    type = "l",  # Plot the observations as a line
+    xlab = "Nanometers",  # Label X axis
+    ylab = "Intensity")  # Label Y axis
+  dev.off()  # Save and close plot file
+  # Record mean intensities to the data frame
+  mean.intensities[[file]] <- mean(read.file$V2, na.rm = TRUE)
+}
+
+# Clean up outputs
+mean.intensities <- mean.intensities[-1]
+mean.intensities <- t(mean.intensities)
+mean.intensities <- data.frame(source.file = rownames(mean.intensities), 
+                               mean.intensities = mean.intensities, 
+                               row.names = NULL)
+# Write to disk
+write.csv(mean.intensities, "mean_intensities.csv")
 
 # Slow!
 results <- c()
